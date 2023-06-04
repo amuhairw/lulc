@@ -1,17 +1,17 @@
 from gc import freeze
 
 import ee
-import heroku as heroku
+# import heroku as heroku
 
-import numpy as np
+# import numpy as np
 import pandas as pd
-import pip
-import push as push
+# import pip
+# import push as push
 from flask import Flask, request, render_template
-from google_crc32c import python
-from pip._internal.resolution.resolvelib import requirements
-from pip._internal.vcs import git
-from sklearn import preprocessing
+# from google_crc32c import python
+# from pip._internal.resolution.resolvelib import requirements
+# from pip._internal.vcs import git
+# from sklearn import preprocessing
 import pickle
 
 # Initialize an app
