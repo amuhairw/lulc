@@ -43,8 +43,6 @@ def se2mask(image):
     cirrusmask = 1 << 11
     mask = quality_band.bitwiseAnd(cloudmask).eq(0) and (quality_band.bitwiseAnd(cirrusmask).eq(0))
     return image.updateMask(mask).divide(10000)
-    pass
-
 
 def get_fused_data():
     """
