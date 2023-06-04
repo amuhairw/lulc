@@ -45,18 +45,12 @@ scaleFactor = 1000
 
 
 # Remember this function from Exercise 5_03, what does it do?
-#def se2mask(image):
-    #"""
-        #This function updates a mask of an ee.Image so that clouds are filtered.
-    #"""
-    # TODO: complete this function
-    #pass
-
 def se2mask(image):
-    """
-    This function updates a mask of an ee.Image so that clouds are filtered.
-    """
-    return image.updateMask(image.select('QA60').not())
+    quality_band = image.select('QA60')
+    cloudmask = 1 << 10
+    cirrusmask = 1 << 11
+    mask = quality_band.bitwiseAnd(cloudmask).eq(0) and (quality_band.bitwiseAnd(cirrusmask).eq(0))
+    return image.updateMask(mask).divide(10000)
 
 
 def get_fused_data():
