@@ -165,21 +165,21 @@ if __name__ == "__main__":
 
 
 
-    from flask import Flask
-
-    app = Flask(__name__) @ app.route('/')
-
-    def home(): return 'Hello, Flask!'
-
-
-    pip
-    freeze > requirements.tx
-
-    heroku
-    buildpacks: set
-    heroku / python
-
-git add .
-git commit -m "Update buildpack and requirements.txt"
-git push heroku master
-
+#     from flask import Flask
+#
+#     app = Flask(__name__) @ app.route('/')
+#
+#     def home(): return 'Hello, Flask!'
+#
+#
+#     pip
+#     freeze > requirements.tx
+#
+#     heroku
+#     buildpacks: set
+#     heroku / python
+#
+# git add .
+# git commit -m "Update buildpack and requirements.txt"
+# git push heroku master
+#
