@@ -1,3 +1,87 @@
+!pip install geemap -qqq
+
+import geemap
+import ee
+# Trigger the authentication flow.
+ee.Authenticate()
+
+# Initialize the library.
+ee.Initialize()
+
+lat, lon = -1.9441, 30.069
+offset = 0.11
+
+corners = [
+    [lon+offset, lat+offset], # bottom up right
+    [lon+offset, lat-offset], # top right
+    [lon-offset, lat-offset], # top left
+    [lon-offset, lat+offset]] # bottom left
+region = ee.Geometry.Polygon(corners)
+
+center = region.centroid()
+center.getInfo()
+
+center_list = center.getInfo()["coordinates"]
+Map = geemap.Map()
+Map.centerObject(center, 14)
+Map
+
+countryData = ee.FeatureCollection("TIGER/2018/Countries")
+print(type(countryData))
+
+countryData
+
+state_nine=countryData.filter(ee.Filter.eq("STATEFP","09"))
+
+import numpy as np
+a=np.array(state_nine.getInfo())
+
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(1, figsize=(5,5))
+sns.heatmap(trainCM/trainCM.sum(axis=1), annot=True)
+ax.set_xlabel('model predictions', fontsize=20)
+ax.set_ylabel('actual', fontsize=20)
+plt.title("Training data confusion matrix", fontsize=20)
+
+#80, 90, 10
+# TODO: complete the following codes
+train_exercise =data.filter(ee.Filter.lt('random', 0.8))
+val_exercise = data.filter(ee.Filter.And(ee.Filter.gte('random', 0.8),ee.Filter.lt('random', 0.9)))
+test_exercise = data.filter(ee.Filter.gte('random', 0.9))
+
+class SimpleNeuralNetwork(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # A linear layer of 500, 400
+        self.fc1 = nn.Linear(500, 400)
+        # A relu activation
+        self.relu1 = nn.ReLU()
+        # A linear layer of 400, 100
+        self.fc2 = nn.Linear(400, 100)
+        # A relu activation
+        self.relu2 = nn.ReLU()
+        # A linear layer of 100, 2
+        self.fc3 = nn.Linear(100, 2)
+        # A sigmoid activation layer
+        # self.sigmoid =
+        def forward(self, x):
+            x = self.fc1(x)
+            x = self.relu1(x)
+            x = self.fc2(x)
+            x = self.relu2(x)
+            x = self.fc3(x)
+            # x = self.sigmoid(x)
+            return x
+
+import torch.nn as nn
+torch.manual_seed(42)
+# Answer
+tensor_input = torch.zeros((9,32,32)).unsqueeze(0).float().to(device)
+out = model(tensor_input)
+
+print("Output is: ", out)
+
 import ee
 
 import numpy as np
