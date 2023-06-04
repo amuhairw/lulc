@@ -1,6 +1,5 @@
 from gc import freeze
 
-import commit as commit
 import ee
 import heroku as heroku
 
