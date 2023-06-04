@@ -115,7 +115,7 @@ def get_features(longitude, latitude):
     )
 
     # TODO: use getInfo to load the sample's features
-    sample = dataclean.first().getInfo()
+    sample = dataclean.getInfo()
 
     # Find the band ordering in the loaded data
     band_order = sample['properties']['band_order']
