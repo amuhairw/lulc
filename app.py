@@ -41,8 +41,9 @@ def se2mask(image):
     quality_band = image.select('QA60')
     cloudmask = 1 << 10
     cirrusmask = 1 << 11
-    mask = quality_band.bitwiseAnd(cloudmask).eq(0) and (quality_band.bitwiseAnd(cirrusmask).eq(0))
+    mask = quality_band.bitwiseAnd(cloudmask).eq(0).And(quality_band.bitwiseAnd(cirrusmask).eq(0))
     return image.updateMask(mask).divide(10000)
+
 
 def get_fused_data():
     """
