@@ -1,8 +1,12 @@
 import ee
-import pandas as pd
-import pickle
-from flask import Flask, request, render_template
 
+import numpy as np
+import pandas as pd
+from flask import Flask, request, render_template
+from sklearn import preprocessing
+import pickle
+
+# Initialize an app
 app = Flask(__name__)
 
 # Load the serialized model
@@ -57,10 +61,10 @@ def get_fused_data():
     se2 = se2.filterBounds(roi)
 
     # Keep pixels that have less than 20% cloud
-    se2 = se2.map(se2mask)
+    se2 = se2.filter(ee.Filter.lt("CLOUDY_PIXEL_PERCENTAGE", 20))
 
     # Update the mask
-    se2 = se2.map(lambda image: image.divide(scaleFactor).copyProperties(image, trainingbands))
+    se2 = se2.map(se2mask)
 
     # Get the median image
     se2 = se2.median()
@@ -80,25 +84,19 @@ def get_fused_data():
 
     return fusedclean
 
-# Prepare the fused data
-gee_data = get_fused_data()
+    # Prepare the fused data
+    gee_data = get_fused_data()
 
 def get_features(longitude, latitude):
     # Create an ee.Geometry instance from the coordinates
     poi_geometry = ee.Geometry.Point([longitude, latitude])
 
     # Sample features for the given point of interest, keeping only the training bands
-    dataclean = gee_data.sampleRegions(
-        collection=roi,
-        scale=10,
-        geometries=poi_geometry,
-        tileScale=8,
-        properties=trainingbands,
-        retainGeometry=False
-    )
+    dataclean = gee_data.select(trainingbands).sampleRegions(collection= poi_geometry, properties=[label], scale=scaleFactor)
+
 
     # Use getInfo to load the sample's features
-    sample = dataclean.first().getInfo()
+    sample = dataclean.getInfo()
 
     # Find the band ordering in the loaded data
     band_order = sample['properties']['band_order']
@@ -110,6 +108,11 @@ def get_features(longitude, latitude):
     data = pd.DataFrame(nested_list.getInfo(), columns=band_order)
     return data
 
+# function to check if point is withing the roi
+def validate_location(longitude, latitude, roi):
+    point = ee.Geometry.Point(longitude, latitude)
+    return roi.contains(point).getInfo()
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -120,6 +123,10 @@ def predict():
     longitude = float(features['longitude'])
     latitude = float(features['latitude'])
     # Get the features for the given location
+    final_features = get_features(longitude, latitude)
+
+if validate_location(longitude, latitude, roi):
+    # TODO: get the features for the given location
     final_features = get_features(longitude, latitude)
 
     # Get predictions from the model using the loaded features
@@ -134,9 +141,9 @@ def predict():
         text = "not built up land"
 
     # Return a response based on the output of the model
-    return render_template('index.html',
-                           prediction_text='The area at {}, {} location is {}'.format(longitude, latitude, text))
+    return render_template('index.html', prediction_text='The area at {}, {} location is {}'.format(longitude, latitude, text))
+else:
+    return render_template('index.html', prediction_text='The area at {}, {} location is is out of bounds.'.format(longitude, latitude))
 
 if __name__ == "__main__":
     app.run(debug=True)
-
